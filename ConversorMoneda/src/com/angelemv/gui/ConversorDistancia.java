@@ -2,10 +2,11 @@ package com.angelemv.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.math.BigInteger;
+import java.text.DecimalFormat;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -16,6 +17,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
+import java.awt.Toolkit;
 
 public class ConversorDistancia extends JFrame implements ActionListener {
 
@@ -26,8 +28,12 @@ public class ConversorDistancia extends JFrame implements ActionListener {
 	private JPanel contentPane;
 	private JTextField textField;
 	JButton btnConvertir, btnRegresar;
+	JComboBox<String> comboBox;
+	JLabel lblResultado;
+	DecimalFormat formato = new DecimalFormat("#.##");
 
 	public ConversorDistancia() {
+		setIconImage(Toolkit.getDefaultToolkit().getImage(ConversorDistancia.class.getResource("/icons/regla.png")));
 		iniciarComponentes();
 	}
 
@@ -57,8 +63,22 @@ public class ConversorDistancia extends JFrame implements ActionListener {
 		contentPane.add(textField);
 		textField.setColumns(10);
 
-		JComboBox comboBox = new JComboBox();
+		comboBox = new JComboBox<String>();
 		comboBox.setBounds(30, 169, 350, 22);
+		comboBox.addItem("Selecciona una opción");
+		comboBox.addItem("Metros a kilometros");
+		comboBox.addItem("Metros a pies");
+		comboBox.addItem("Metros a yardas");
+		comboBox.addItem("Kilometros a metros");
+		comboBox.addItem("Kilometros a pies");
+		comboBox.addItem("Kilometros a yardas");
+		comboBox.addItem("Pies a metros");
+		comboBox.addItem("Pies a kilometros");
+		comboBox.addItem("Pies a yardas");
+		comboBox.addItem("Yardas a metros");
+		comboBox.addItem("Yardas a kilometros");
+		comboBox.addItem("Yardas a pies");
+		comboBox.addActionListener(this);
 		contentPane.add(comboBox);
 
 		JPanel panel = new JPanel();
@@ -73,7 +93,7 @@ public class ConversorDistancia extends JFrame implements ActionListener {
 		btnConvertir.addActionListener(this);
 		panel.add(btnConvertir, BorderLayout.NORTH);
 
-		JLabel lblResultado = new JLabel("");
+		lblResultado = new JLabel("");
 		lblResultado.setForeground(new Color(255, 255, 255));
 		lblResultado.setHorizontalAlignment(SwingConstants.CENTER);
 		lblResultado.setFont(new Font("Arial", Font.PLAIN, 40));
@@ -97,15 +117,73 @@ public class ConversorDistancia extends JFrame implements ActionListener {
 		}		
 		if (btnConvertir == e.getSource()) {
 			String textoCampo = textField.getText();
-			if (esNumero(textoCampo)) {
-				JOptionPane.showMessageDialog(null, "Ingresaste numeros!");
-			}
-			else {
-				JOptionPane.showMessageDialog(null, "Ingresa Numeros por favor");
+			if (esNumero(textoCampo) && !textoCampo.isEmpty()) {
+				int cantidad = Integer.parseInt(textoCampo);
+				String resultado = conversionCantidad(comboBox.getSelectedIndex(), cantidad);
+				lblResultado.setText(resultado);
+			} else {
+				JOptionPane.showMessageDialog(null, "Por favor no dejes el campo vacio, e ingresa solo numeros");
 			}
 		}
 	}
 	
+	private String conversionCantidad(int selectedIndex, int cantidad) {
+	switch (selectedIndex) {
+	case 0: {
+		return "Selecciona una opción";
+	}
+	case 1:{
+		double total = cantidad / 1000;
+		return "El total en Kilometros es: " + formato.format(total);
+	}
+	case 2:{
+		double total = cantidad * 3.2808399 ;
+		return "El total en Pies es: " + formato.format(total);
+	}
+	case 3:{
+		double total = cantidad * 1.0936133;
+		return "El total en Yardas es: " + formato.format(total);
+	}
+	case 4:{
+		double total = cantidad * 1000;
+		return "El total en Metros es: " + formato.format(total);
+	}
+	case 5:{
+		double total = cantidad * 3280.84;
+		return "El total en Pies es: " + formato.format(total);
+	}
+	case 6:{
+		double total = cantidad * 1093.6133;
+		return "El total en Yardas es: " + formato.format(total);
+	}
+	case 7:{
+		double total = cantidad / 3.2808399;
+		return "El total en Metros es: " + formato.format(total);
+	}
+	case 8:{
+		double total = cantidad * 0.0003048;
+		return "El total en Kilometros es: " + formato.format(total);
+	}
+	case 9:{
+		double total = cantidad / 3 ;
+		return "El total en Yardas es: " + formato.format(total);
+	}
+	case 10:{
+		double total = cantidad / 0.9144 ;
+		return "El total en Metros es: " + formato.format(total);
+	}
+	case 11:{
+		double total = cantidad * 0.0009144 ;
+		return "El total en Kilometros es: " + formato.format(total);
+	}
+	case 12:{
+		double total = cantidad * 3 ;
+		return "El total en Pies es: " + formato.format(total);
+	}
+	}
+		return null;
+	}
+
 	private boolean esNumero(String texto) {
 		return texto.matches("\\d+");
 	}

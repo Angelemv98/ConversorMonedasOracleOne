@@ -12,6 +12,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import java.awt.Color;
+import java.awt.Toolkit;
 
 public class Bienvenida extends JFrame implements ActionListener {
 
@@ -19,10 +20,12 @@ public class Bienvenida extends JFrame implements ActionListener {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	JButton btnConversordeMoneda, btnConversorDeDistancia, btnConversorDeTemperatura;
+	JButton btnConversordeMoneda, btnConversorDeDistancia, btnConversorDeTemperatura ,btnSalir;
 	private JPanel contentPane;
 
 	public Bienvenida() {
+		setBackground(new Color(0, 64, 128));
+		setIconImage(Toolkit.getDefaultToolkit().getImage(Bienvenida.class.getResource("/icons/R.png")));
 		setTitle("Conversor de unidades");
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -74,6 +77,14 @@ public class Bienvenida extends JFrame implements ActionListener {
 		btnConversorDeTemperatura.addActionListener(this);
 		panel.add(btnConversorDeTemperatura);
 
+		
+		btnSalir = new JButton("Salir");
+		btnSalir.setForeground(Color.BLACK);
+		btnSalir.setFont(new Font("Arial", Font.PLAIN, 15));
+		btnSalir.setFocusable(false);
+		btnSalir.addActionListener(this);		
+		btnSalir.setBounds(666, 12, 108, 23);
+		contentPane.add(btnSalir);
 	}
 
 	@Override
@@ -82,6 +93,9 @@ public class Bienvenida extends JFrame implements ActionListener {
 			ConversorMoneda frame2 = new ConversorMoneda();
 			frame2.setVisible(true);
 			Bienvenida.this.dispose();
+		}
+		if (btnSalir == e.getSource()) {
+			System.exit(0);
 		}
 		if (btnConversorDeDistancia == e.getSource()) {
 			ConversorDistancia frame2 = new ConversorDistancia();

@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.DecimalFormat;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -16,8 +17,9 @@ import javax.swing.JComboBox;
 
 import javax.swing.JButton;
 import java.awt.BorderLayout;
+import java.awt.Toolkit;
 
-public class ConversorMoneda extends JFrame implements ActionListener{
+public class ConversorMoneda extends JFrame implements ActionListener {
 
 	/**
 	 * 
@@ -27,15 +29,20 @@ public class ConversorMoneda extends JFrame implements ActionListener{
 	private JPanel contentPane;
 	private JTextField textField;
 	JButton btnConvertir, btnRegresar;
+	JComboBox<String> comboBox;
+	JLabel lblResultado;
+	DecimalFormat formato = new DecimalFormat("#.##");
+
 
 	public ConversorMoneda() {
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		setIconImage(Toolkit.getDefaultToolkit().getImage(ConversorMoneda.class.getResource("/icons/dinero.png")));
 		iniciarComponentes();
 	}
 
 	private void iniciarComponentes() {
 		setTitle("Conversor de moneda");
 		setResizable(false);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 800, 400);
 		setLocationRelativeTo(null);
 		contentPane = new JPanel();
@@ -52,14 +59,28 @@ public class ConversorMoneda extends JFrame implements ActionListener{
 		contentPane.add(lblBienvenida);
 
 		textField = new JTextField();
+		textField.setForeground(new Color(255, 255, 255));
+		textField.setBackground(new Color(0, 64, 128));
 		textField.setFont(new Font("Arial", Font.PLAIN, 15));
 		textField.setHorizontalAlignment(SwingConstants.CENTER);
 		textField.setBounds(404, 170, 350, 20);
 		contentPane.add(textField);
 		textField.setColumns(10);
 
-		JComboBox comboBox = new JComboBox();
+		comboBox = new JComboBox<String>();
+		comboBox.setForeground(new Color(255, 255, 255));
+		comboBox.setBackground(new Color(0, 64, 128));
 		comboBox.setBounds(30, 169, 350, 22);
+		comboBox.addItem("Selecciona una opción");
+		comboBox.addItem("MXN Pesos mexicanos - EUR Euro");
+		comboBox.addItem("MXN Pesos mexicanos - USD Dólar estadounidense");
+		comboBox.addItem("MXN Pesos mexicanos - PEN Nuevo sol peruano");
+		comboBox.addItem("MXN Pesos mexicanos - ARS Peso argentino");
+		comboBox.addItem("EUR Euro - MXN Pesos mexicanos");
+		comboBox.addItem("USD Dólar estadounidense - MXN Pesos mexicanos");
+		comboBox.addItem("PEN Nuevo sol peruano - MXN Pesos mexicanos");
+		comboBox.addItem("ARS Peso argentino - MXN Pesos mexicanos");
+		comboBox.addActionListener(this);
 		contentPane.add(comboBox);
 
 		JPanel panel = new JPanel();
@@ -74,10 +95,10 @@ public class ConversorMoneda extends JFrame implements ActionListener{
 		btnConvertir.addActionListener(this);
 		panel.add(btnConvertir, BorderLayout.NORTH);
 
-		JLabel lblResultado = new JLabel("");
+		lblResultado = new JLabel("");
 		lblResultado.setForeground(new Color(255, 255, 255));
 		lblResultado.setHorizontalAlignment(SwingConstants.CENTER);
-		lblResultado.setFont(new Font("Arial", Font.PLAIN, 40));
+		lblResultado.setFont(new Font("Arial", Font.PLAIN, 30));
 		panel.add(lblResultado, BorderLayout.SOUTH);
 
 		btnRegresar = new JButton("Regresar");
@@ -95,22 +116,63 @@ public class ConversorMoneda extends JFrame implements ActionListener{
 			Bienvenida frame = new Bienvenida();
 			frame.setVisible(true);
 			ConversorMoneda.this.dispose();
-		}		
+		}
 		if (btnConvertir == e.getSource()) {
 			String textoCampo = textField.getText();
-			if (esNumero(textoCampo)) {
-				JOptionPane.showMessageDialog(null, "Ingresaste numeros!");
-				//TODO HAy que implementar lo de la caja para seleccionar opciones y hacer dichas conversiones en la logica
-			}
-			else {
-				JOptionPane.showMessageDialog(null, "Ingresa Numeros por favor");
+			if (esNumero(textoCampo) && !textoCampo.isEmpty()) {
+				int cantidad = Integer.parseInt(textoCampo);
+				String resultado = conversionCantidad(comboBox.getSelectedIndex(), cantidad);
+				lblResultado.setText(resultado);
+			} else {
+				JOptionPane.showMessageDialog(null, "Por favor no dejes el campo vacio, e ingresa solo numeros");
 			}
 		}
+	}
+
+	private String conversionCantidad(int selectedItem, int cantidad) {
+		switch (selectedItem) {
+		case 0: {
+			return "Selecciona una opción";
+		}
+		case 1: {
+			double total = cantidad / 18.85;
+			return "El total en euros es: " + formato.format(total) + " EUR";
+		}
+		case 2: {
+			double total = cantidad / 17;
+			return "El total en dolares es: " + formato.format(total) + " USD";
+		}
+		case 3: {
+			double total = cantidad / 4.75;
+			return "El total en soles peruanos es: " + formato.format(total) + " PEN";
+		}
+		case 4: {
+			double total = cantidad * 15.61;
+			return "El total en pesos argentinos es: " + formato.format(total) + " ARS";
+		}
+		case 5: {
+			double total = cantidad * 18.85;
+			return "El total en pesos mexicanos es: " + formato.format(total) + " MXN";
+		}
+		case 6: {
+			double total = cantidad * 17;
+			return "El total en pesos mexicanos es: " + formato.format(total) + " MXN";
+		}
+		case 7: {
+			double total = cantidad * 4.75;
+			return "El total en pesos mexicanos es: " + formato.format(total) + " MXN";
+		}
+		case 8: {
+			double total = cantidad / 15.61;
+			return "El total en pesos mexicanos es: " + formato.format(total) + " MXN";
+		}
+		}
+		return null;
+
 	}
 
 	private boolean esNumero(String texto) {
 		return texto.matches("\\d+");
 	}
-	
-	
+
 }
